@@ -184,6 +184,18 @@
       <Project>{0efa2ffa-bcf6-4d00-a861-1adadffd4981}</Project>
       <Name>RBACProject.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RBACProject.IRepository\RBACProject.IRepository.csproj">
+      <Project>{f7c85d11-3fa4-479a-8c01-12badec783a6}</Project>
+      <Name>RBACProject.IRepository</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RBACProject.Model\RBACProject.Model.csproj">
+      <Project>{2216206a-dc6b-4501-933c-7c67f4d67013}</Project>
+      <Name>RBACProject.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RBACProject.Repository\RBACProject.Repository.csproj">
+      <Project>{1bb977f2-a354-4d4b-a57e-8584a9565d00}</Project>
+      <Name>RBACProject.Repository</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

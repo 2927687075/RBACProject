@@ -10,9 +10,9 @@ namespace RBACProject.IRepository
     {
         #region insert
         // 单个插入
-        int insert(T model);
+        bool Insert(T model);
         //批量插入
-        int insert(List<T> model);
+        bool Insert(List<T> models);
         #endregion
 
         #region query
@@ -22,14 +22,14 @@ namespace RBACProject.IRepository
         #endregion query
 
         #region delete
-        int Delete(int Id);
-        int Delete(T model);
-        int Delete(List<T> models);
-        int DeleteByWhere(Expression<Func<T, bool>> where);
+        bool Delete(int Id);
+        bool Delete(T model);
+        bool Delete(List<T> models);
+        bool DeleteByWhere(Expression<Func<T, bool>> where);
         #endregion
 
         #region Update
-        int Update(T model);
+        bool Update(T model);
 
 
         #endregion

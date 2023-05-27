@@ -31,7 +31,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SqlSugar, Version=5.1.4.77, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SqlSugar.5.1.4.77\lib\SqlSugar.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -41,7 +45,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseRepository.cs" />
+    <Compile Include="DBUtils\SqlSugarHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sys\ActionRepository.cs" />
+    <Compile Include="Sys\MenuActionRepository.cs" />
+    <Compile Include="Sys\MenuRepository.cs" />
+    <Compile Include="Sys\MenuRoleActionRepository.cs" />
+    <Compile Include="Sys\RoleRepository.cs" />
+    <Compile Include="Sys\UserRepository.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RBACProject.Common\RBACProject.Common.csproj">
+      <Project>{0efa2ffa-bcf6-4d00-a861-1adadffd4981}</Project>
+      <Name>RBACProject.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RBACProject.IRepository\RBACProject.IRepository.csproj">
+      <Project>{f7c85d11-3fa4-479a-8c01-12badec783a6}</Project>
+      <Name>RBACProject.IRepository</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RBACProject.Model\RBACProject.Model.csproj">
+      <Project>{2216206a-dc6b-4501-933c-7c67f4d67013}</Project>
+      <Name>RBACProject.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
