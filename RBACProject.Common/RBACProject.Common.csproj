@@ -82,6 +82,7 @@
     <Compile Include="Operator\OperatorProvider.cs" />
     <Compile Include="Security\DESEncrypt.cs" />
     <Compile Include="Security\Md5.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="WebHelper.cs" />
     <Compile Include="VerifyCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

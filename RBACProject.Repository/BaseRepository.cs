@@ -1,6 +1,7 @@
-﻿using System;
+﻿using System;   
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using SqlsugarHelper;
@@ -9,25 +10,27 @@ namespace RBACProject.IRepository
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : class, new()
     {
+        SqlSugarHelper sqlSugarHelper =  new SqlSugarHelper();
+        
         #region delete
         public bool Delete(int Id)
         {
-            return SqlSugarHelper<T>.Delete(Id);
+            return SqlSugarHelper.db.Deleteable<T>().ExecuteCommand() > 0;
         }
 
         public bool Delete(T model)
         {
-            return SqlSugarHelper<T>.Delete(model);
+            return SqlSugarHelper.db.Deleteable<T>(model).ExecuteCommand() > 0;
         }
 
         public bool Delete(List<T> models)
         {
-            return SqlSugarHelper<T>.Delete(models);
+            return SqlSugarHelper.db.Deleteable<List<T>>(models).ExecuteCommand() > 0;
         }
 
-        public bool DeleteByWhere(System.Linq.Expressions.Expression<Func<T, bool>> where)
+        public bool DeleteByWhere(Expression<Func<T, bool>> where)
         {
-            return SqlSugarHelper<T>.Delete(where);
+            return SqlSugarHelper.db.Deleteable<T>().Where(where).ExecuteCommand() > 0;
         }
 
         #endregion delete
@@ -35,40 +38,54 @@ namespace RBACProject.IRepository
         #region insert
         public bool Insert(T model)
         {
-           return SqlSugarHelper<T>.Insert(model);
+            return SqlSugarHelper.db.Insertable<T>(model).ExecuteCommand() > 0;
         }
 
         public bool Insert(List<T> models)
         {
-            return SqlSugarHelper<T>.Insert(models);
+            return SqlSugarHelper.db.Insertable<List<T>>(models).ExecuteCommand() > 0;
         }
         #endregion
 
         #region query
+        public T QuerySingle(Expression<Func<T, bool>> where)
+        {
+            return SqlSugarHelper.db.Queryable<T>().First(where);
+        }
         public List<T> queryAll()
         {
-            throw new NotImplementedException();
+            return SqlSugarHelper.db.Queryable<T>().ToList();
         }
 
-        public List<T> queryByWhere(System.Linq.Expressions.Expression<Func<T, bool>> expression)
+        public List<T> queryByWhere(Expression<Func<T, bool>> expression)
         {
-            throw new NotImplementedException();
-        }
-
-        public T querySingle(int id)
-        {
-            throw new NotImplementedException();
+            return SqlSugarHelper.db.Queryable<T>().Where(expression).ToList();
         }
         #endregion
 
         #region update
         public bool Update(T model)
         {
-            return SqlSugarHelper<T>.Update(model);
-        } 
+            return SqlSugarHelper.db.Updateable<T>(model).ExecuteCommand() > 0;
+        }
+
+        public bool Update(List<T> models)
+        {
+            return SqlSugarHelper.db.Updateable<List<T>>(models).ExecuteCommand() > 0;
+        }
+
+        public bool Update(Expression<Func<T, bool>> expression)
+        {
+            return SqlSugarHelper.db.Updateable<T>(expression).ExecuteCommand() > 0;
+        }
+
+        public bool Update(Expression<Func<List<T>, bool>> expression)
+        {
+            return SqlSugarHelper.db.Updateable<List<T>>(expression).ExecuteCommand() > 0;
+        }
+
+
         #endregion
 
-
- 
     }
 }

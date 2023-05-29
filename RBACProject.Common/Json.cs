@@ -7,7 +7,7 @@ using System.Data;
 
 namespace RBACProject.Common
 {  
-    public static class Json
+    public static class MyJson
     {
         public static object ToJson(this string Json)
         {

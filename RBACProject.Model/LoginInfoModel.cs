@@ -11,9 +11,9 @@ namespace RBACProject.Model
     /// <summary>
     /// 登录信息
     /// </summary>
-    public class LoginfoModel
+    public class LoginInfoModel
     {
-
+        [SugarColumn(IsIgnore = true)]
         [Display(Name = "自增id")]
         /// <summary>
         /// 自增id

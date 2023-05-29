@@ -1,3 +1,10 @@
-﻿@{
-    Layout = null;
+﻿@model RBACProject.Model.UserModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<button>查询数据</button>
+<div>@Model.UserName</div>
+<div>@Model.PassWord</div>
+<div>@Model.CreateOn</div>
+<div>@Model.UpdateOn</div>
