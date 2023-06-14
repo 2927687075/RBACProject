@@ -304,7 +304,37 @@ namespace RBACProject.Controllers
             return Json(apiResult, JsonRequestBehavior.AllowGet);
         }
 
-       
+        public ActionResult GetUserInfo()
+        {
+            //session里面获取userId
+            int userId = 10;
+
+            UserModel userModel = userRepository.QuerySingle(it => it.Id == userId);
+
+            return View(userModel);
+        }
+
+        public ActionResult UpdateUserInfo(UserModel userModel)
+        {
+            ApiResult<UserModel> apiResult = new ApiResult<UserModel>()
+            {
+                state = 400,
+                msg = "修改失败"
+
+            };
+
+            userModel.UpdateBy = "当前操作者，session里面的user";
+            userModel.UpdateOn = DateTime.Now;
+
+            var insertOk = userRepository.Update(userModel);
+            if (insertOk)
+            {
+                apiResult.state = 200;
+                apiResult.msg = "修改成功";
+            }
+
+            return Json(apiResult, JsonRequestBehavior.AllowGet);
+        }
 
 
 

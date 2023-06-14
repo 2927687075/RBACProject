@@ -342,7 +342,6 @@
     <Content Include="Views\Role\Index.cshtml" />
     <Content Include="Views\User\GetUserInfo.cshtml" />
     <Content Include="Views\Shared\_LayoutSinglePage.cshtml" />
-    <Content Include="Views\PersonalInfo\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
