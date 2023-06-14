@@ -8,7 +8,7 @@ using System.Data.SqlClient;
 using System.Configuration;
 using System.Linq.Expressions;
 
-namespace SqlsugarHelper
+namespace RBACProject.Repository
 {
    public class SqlSugarHelper
     {

@@ -13,7 +13,7 @@ namespace RBACProject.Model
     /// </summary>
     public class UserModel
     {
-
+        [SugarColumn(IsPrimaryKey = true)]
         [Display(Name = "ID")]
         /// <summary>
         /// ID
@@ -72,7 +72,7 @@ namespace RBACProject.Model
         /// <summary>
         /// 状态
         /// </summary>
-        public Boolean Status { get; set; }
+        public int? Status { get; set; }
 
         [Display(Name = "创建时间")]
         /// <summary>
@@ -90,13 +90,13 @@ namespace RBACProject.Model
         /// <summary>
         /// 创建者
         /// </summary>
-        public int CreateBy { get; set; }
+        public string CreateBy { get; set; }
 
         [Display(Name = "修改者")]
         /// <summary>
         /// 修改者
         /// </summary>
-        public int UpdateBy { get; set; }
+        public string UpdateBy { get; set; }
 
         [Display(Name = "最后一次登录IP")]
         /// <summary>
@@ -109,6 +109,13 @@ namespace RBACProject.Model
         /// 最后一次登录时间
         /// </summary>
         public DateTime LoginDate { get; set; }
+
+        [Display(Name = "部门")]
+        /// <summary>
+        /// 最后一次登录时间
+        /// </summary>
+        public int? DeptId { get; set; }
+
 
     }
 }

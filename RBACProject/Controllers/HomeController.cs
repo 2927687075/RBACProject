@@ -10,6 +10,7 @@ using RBACProject.Model;
 
 namespace RBACProject.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         UserRepository userRepository = new UserRepository();
@@ -17,9 +18,9 @@ namespace RBACProject.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            var userModel = userRepository.QuerySingle(it => it.Id == 10);
+            
 
-            return View(userModel);
+            return View();
         }
 
     }

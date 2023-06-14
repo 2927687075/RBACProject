@@ -7,13 +7,14 @@ using SqlSugar;
 
 namespace RBACProject.Model
 {
-    [SugarTable("t_role_menu")]
+    [SugarTable("t_menu_role_action")]
     /// <summary>
     /// 角色菜单权限
     /// </summary>
     public class RoleMenuActionModel
     {
 
+        [SugarColumn(IsPrimaryKey = true)]
         [Display(Name = "自增id")]
         /// <summary>
         /// 自增id

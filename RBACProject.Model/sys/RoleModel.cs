@@ -14,6 +14,7 @@ namespace RBACProject.Model
     public class RoleModel
     {
 
+        [SugarColumn(IsPrimaryKey = true)]
         [Display(Name = "ID")]
         /// <summary>
         /// ID
@@ -42,7 +43,7 @@ namespace RBACProject.Model
         /// <summary>
         /// 状态(1:有效，0：无效)
         /// </summary>
-        public Boolean Status { get; set; }
+        public int? Status { get; set; }
 
         [Display(Name = "创建时间")]
         /// <summary>
@@ -60,13 +61,13 @@ namespace RBACProject.Model
         /// <summary>
         /// 创建者
         /// </summary>
-        public int CreateBy { get; set; }
+        public string CreateBy { get; set; }
 
         [Display(Name = "修改者")]
         /// <summary>
         /// 修改者
         /// </summary>
-        public int UpdateBy { get; set; }
+        public string UpdateBy { get; set; }
 
     }
 }

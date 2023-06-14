@@ -4,12 +4,14 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using SqlsugarHelper;
+using RBACProject.Model;
+using RBACProject.Repository;
 
 namespace RBACProject.IRepository
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : class, new()
     {
+        //因为db你是写在构造函数里面的，所以要new一个对象才可以使用db
         SqlSugarHelper sqlSugarHelper =  new SqlSugarHelper();
         
         #region delete
@@ -38,7 +40,7 @@ namespace RBACProject.IRepository
         #region insert
         public bool Insert(T model)
         {
-            return SqlSugarHelper.db.Insertable<T>(model).ExecuteCommand() > 0;
+            return SqlSugarHelper.db.Insertable<T>(model).IgnoreColumns("id").ExecuteCommand() > 0;
         }
 
         public bool Insert(List<T> models)
@@ -61,6 +63,7 @@ namespace RBACProject.IRepository
         {
             return SqlSugarHelper.db.Queryable<T>().Where(expression).ToList();
         }
+
         #endregion
 
         #region update
@@ -84,8 +87,9 @@ namespace RBACProject.IRepository
             return SqlSugarHelper.db.Updateable<List<T>>(expression).ExecuteCommand() > 0;
         }
 
-
         #endregion
+
+
 
     }
 }

@@ -45,10 +45,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MenuTree.cs" />
+    <Compile Include="Other\DeptModel.cs" />
+    <Compile Include="Other\UserModelResult.cs" />
+    <Compile Include="Page\Pager.cs" />
+    <Compile Include="Page\TableResult.cs" />
     <Compile Include="result\ApiResult.cs" />
     <Compile Include="result\ResultType.cs" />
     <Compile Include="sys\ActionModel.cs" />
     <Compile Include="LoginInfoModel.cs" />
+    <Compile Include="sys\DeptModel.cs" />
     <Compile Include="sys\MenuActionModel.cs" />
     <Compile Include="sys\MenuModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

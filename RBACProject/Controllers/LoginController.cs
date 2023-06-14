@@ -11,6 +11,7 @@ using System.Net;
 
 namespace RBACProject.Controllers
 {
+    [AllowAnonymous]
     public class LoginController : Controller
     {
         UserRepository userRepository = new UserRepository();
@@ -91,6 +92,22 @@ namespace RBACProject.Controllers
                 apiResult.msg = "登录成功";
                 apiResult.data = userModel;
                 loginInfo.Message = "登录成功";
+
+                //当前操作者的信息
+                OperatorModel operatorModel = new OperatorModel();
+                operatorModel.UserId = userModel.Id;
+                operatorModel.UserName = userModel.UserName;
+                operatorModel.RealName = userModel.RealName;
+                operatorModel.HeadShot = userModel.HeadShot;
+                operatorModel.LoginIPAddress = loginInfo.IpAddress;
+                operatorModel.LoginIPAddressName = Net.GetLocation(operatorModel.LoginIPAddress);
+                operatorModel.LoginTime = DateTime.Now;
+                operatorModel.LoginToken = Guid.NewGuid().ToString();
+
+
+                //把用户信息写到session里面或者cookie里面
+                WebHelper.WriteCookie("myCookie", operatorModel.ToJson());
+                WebHelper.WriteSession("mySession", operatorModel.ToJson());
 
             }
             else

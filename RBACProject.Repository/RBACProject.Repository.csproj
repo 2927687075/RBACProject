@@ -54,6 +54,8 @@
     <Compile Include="Sys\MenuRepository.cs" />
     <Compile Include="Sys\MenuRoleActionRepository.cs" />
     <Compile Include="Sys\RoleRepository.cs" />
+    <Compile Include="Sys\DeptRepository.cs" />
+    <Compile Include="Sys\UserRoleRepository.cs" />
     <Compile Include="Sys\UserRepository.cs" />
   </ItemGroup>
   <ItemGroup>

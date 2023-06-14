@@ -52,6 +52,8 @@
     <Compile Include="sys\IMenuRepository.cs" />
     <Compile Include="sys\IMenuRoleActionRepository.cs" />
     <Compile Include="sys\IRoleRepository.cs" />
+    <Compile Include="sys\IDeptRepository.cs" />
+    <Compile Include="sys\IUserRoleRepository.cs" />
     <Compile Include="sys\IUserRepository.cs" />
   </ItemGroup>
   <ItemGroup>

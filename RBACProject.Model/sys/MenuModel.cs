@@ -13,7 +13,7 @@ namespace RBACProject.Model
     /// </summary>
     public class MenuModel
     {
-
+        [SugarColumn(IsPrimaryKey = true)]
         [Display(Name = "ID")]
         /// <summary>
         /// ID
@@ -54,7 +54,7 @@ namespace RBACProject.Model
         /// <summary>
         /// 状态
         /// </summary>
-        public Boolean Status { get; set; }
+        public int Status { get; set; }
 
         [Display(Name = "创建时间")]
         /// <summary>
@@ -72,13 +72,26 @@ namespace RBACProject.Model
         /// <summary>
         /// 创建者
         /// </summary>
-        public int CreateBy { get; set; }
+        public string CreateBy { get; set; }
 
         [Display(Name = "编辑者")]
         /// <summary>
         /// 编辑者
         /// </summary>
-        public int UpdateBy { get; set; }
+        public string UpdateBy { get; set; }
+
+        /// <summary>
+        /// 菜单对应的操作，不从数据库里面获取，后台进行处理
+        /// </summary>
+        [SugarColumn(IsIgnore = true)]
+        public string MenuActionHtml { get; set; } = "";
+
+        /// <summary>
+        /// 记录是否选中，不从数据库里面获取，后台进行处理
+        /// </summary>
+        [SugarColumn(IsIgnore = true)]
+
+        public bool IsChecked { get; set; }
 
     }
 }

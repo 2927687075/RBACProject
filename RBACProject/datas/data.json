@@ -1,0 +1,34 @@
+{
+	"code":0,
+	"msg":"",
+	"count":10,
+	"data":[
+		{
+			"Id": 1,
+			"UserName": "zhangsan",
+			"Status": 20,
+
+		},
+		{
+			"id":2,
+			"uname":"lisi",
+			"age":28,
+			"sex":false,
+			"job":"teacher"
+		},
+		{
+			"id":3,
+			"uname":"wangwu",
+			"age":24,
+			"sex":true,
+			"job":"programmer"
+		},
+		{
+			"id":4,
+			"uname":"zhangsan",
+			"age":23,
+			"sex":false,
+			"job":"police"
+		}
+	]
+}

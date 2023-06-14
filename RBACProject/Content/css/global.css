@@ -411,7 +411,8 @@ body .site-demo-nav .layui-nav-item{line-height: 40px}
   .admin-header-item-mobile{ display: block; }
 }
 .layui-layout-admin .layui-header {
-    border-bottom: 5px solid #1AA094;
+	border-bottom: 6px solid #536878;
+	/*border-bottom: 5px solid #1AA094;*/
 }
 .layui-layout-admin .layui-body,.layui-layout-admin .layui-side{top:70px;}
 .layui-icon.green,.iconfont.green{color:green;}

@@ -13,7 +13,7 @@ namespace RBACProject.Model
     /// </summary>
     public class UserRoleModel
     {
-
+        [SugarColumn(IsPrimaryKey = true)]
         [Display(Name = "自增id")]
         /// <summary>
         /// 自增id

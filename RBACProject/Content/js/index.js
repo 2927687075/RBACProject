@@ -1,5 +1,5 @@
 ﻿layui.config({
-    base: '/Areas/Admin/plugins/app/'
+    base: '/Content/plugins/app/'
 }).use(['element', 'layer', 'navbar', 'tab'], function () {
     var element = layui.element,
         $ = layui.jquery,
@@ -20,7 +20,7 @@
     //设置navbar
     navbar.set({
         elem: '#admin-navbar-side',
-        url: '/Permissions/Menu/GetMenuList?isIndex=true'
+        url: '/Permission/GetMenuList'
     });
     //渲染navbar
     navbar.render();
