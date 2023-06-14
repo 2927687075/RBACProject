@@ -10,7 +10,7 @@
             <div class="layui-card">
                 <div class="layui-card-header">设置我的资料</div>
                 <div class="layui-card-body" pad15>
-                    <form action="/SysSet/Info/Index" method="post" class="layui-form" lay-filter="">
+                    <form action="/user/GetUserInfo" method="post" class="layui-form" lay-filter="">
                         <input type="hidden" name="Id" value="@Model.Id" />
                         <div class="layui-form-item">
                             <label class="layui-form-label">我的角色</label>
@@ -43,7 +43,7 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">头像</label>
                             <div class="layui-input-inline">
-                                <input name="HeadShot" lay-verify="required" readonly id="HeadShot" placeholder="图片地址" value="@Model.HeadShot" class="layui-input">
+                                <input name="HeadShot" @*lay-verify="required"*@ readonly id="HeadShot" placeholder="图片地址" value="@Model.HeadShot" class="layui-input">
                             </div>
                             <div class="layui-input-inline layui-btn-container" style="width: auto;">
                                 <button type="button" class="layui-btn layui-btn-primary" id="btnUpload">

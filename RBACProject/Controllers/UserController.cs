@@ -314,7 +314,8 @@ namespace RBACProject.Controllers
             return View(userModel);
         }
 
-        public ActionResult UpdateUserInfo(UserModel userModel)
+        [HttpPost]
+        public ActionResult GetUserInfo(UserModel userModel)
         {
             ApiResult<UserModel> apiResult = new ApiResult<UserModel>()
             {
@@ -333,10 +334,54 @@ namespace RBACProject.Controllers
                 apiResult.msg = "修改成功";
             }
 
-            return Json(apiResult, JsonRequestBehavior.AllowGet);
+            return View(userModel);
+        }
+
+
+        public ActionResult UpdatePwd()
+        {
+            //获取当前session的userId
+            int userId = 10;
+
+            UserModel userModel = userRepository.QuerySingle(it => it.Id == userId);
+            
+
+            return View(userModel);
+        }
+
+        [HttpPost]
+        public ActionResult UpdatePwd(UserModel userModel)
+        {
+            string oldPwd = Request["OldPassword"];
+            string newPassword = Request["Password"];
+            string rePassword = Request["Repassword"];
+
+            if (newPassword != rePassword)
+            {
+                //两次密码输入不一致
+
+                
+            }
+
+
+            //获取当前session的userId
+            int userId = 10;
+
+            UserModel user = userRepository.QuerySingle(it => it.Id == userId);
+            if (user.PassWord==Md5.md5(oldPwd,32))
+            {
+                user.PassWord = Md5.md5(newPassword, 32);
+                user.UpdateBy = "当前操作者，session里面的user";
+                user.UpdateOn = DateTime.Now;
+
+                var insertOk = userRepository.Update(user);
+            }
+
+            return View(user);
         }
 
 
 
+        
     }
 }
