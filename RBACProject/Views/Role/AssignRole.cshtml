@@ -33,14 +33,15 @@
 <script>
         layui.use(['common', 'treeGrid','form'], function () {
             common = layui.common,
-            treeGrid = layui.treeGrid,
+                treeGrid = layui.treeGrid,
+                 $ = layui.$,
                 form = layui.form;
 
             var treeTable = treeGrid.render({
                 id: 'tbReload'
                 , elem: '#tbMenu'
                 , height: 'full-112' //高度最大化减去差值
-                , url: '/Role/RoleMenuActionList'
+                , url: '/Role/RoleMenuActionList?roleId=' + $("#hiddenRoleId").val()
                 , page: false //开启分页
                 , cellMinWidth: 100
                 , treeId: 'Id'//树形id字段名称
@@ -65,7 +66,7 @@
                         page: {
                             curr: 1 //重新从第 1 页开始
                         }
-                      , where:{roleId:$("#hidfRoleId").val()}
+                        , where: { roleId: $("#hiddenRoleId").val()}
                     });
                 }
             };
@@ -86,7 +87,7 @@
             //保存设置
             $("#btnSave").on('click', function () {
                 var _roleId = $("#hiddenRoleId").val(); //选择的角色的id
-                //获取.layui-table组件所有选中 checkbox 的代码
+                //获取.layui-table组件所有 checkbox 的代码
                 var cbxs = $(".layui-table").find('tbody input[type="checkbox"]');
                 var _list = [];
 
@@ -96,9 +97,9 @@
                     //选中的才要进行处理
                     if (item.checked == true) {
                         var _row = { MenuId: 0, RoleId: 0, ActionId: 0 };
-                        var _name = item.name;//cbx_2
+                        var _name = item.name;//cbx_3
 
-
+                        //这段html是htmlHelper里面自己写的
                         /*<input name="cbx_3" lay-skin="primary value=""title="添加"type="checkbox" checked>*/
 
                         //检查字符串_name是否有包含cbx_，有则将其替换为"",indexof()返回指定字符串在另一个字符串中的开始索引

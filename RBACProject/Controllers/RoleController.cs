@@ -10,25 +10,36 @@ using RBACProject.Common;
 
 namespace RBACProject.Controllers
 {
-    [AllowAnonymous]
     public class RoleController : Controller
     {
         ActionRepository actionRepository = new ActionRepository();
         RoleRepository roleRepository = new RoleRepository();
         UserRoleRepository userRoleRepository = new UserRoleRepository();
         MenuRepository menuRepository = new MenuRepository();
+        UserRepository userRepository = new UserRepository();
 
 
         // GET: Role
         public ActionResult Index(int? id)
         {
+            //获取mySession里面的登录者的信息
+            //获取当前操作者的角色id
+            var obj = DESEncryptNew.Decrypt(Session["mySession"].ToString());
+            OperatorModel operatorModel = MyJson.ToObject<OperatorModel>(obj);
+            List<RoleModel> roleModels = userRepository.GetUserRoleModels(operatorModel.UserId);
+            List<int> roleIds = new List<int>();
+            foreach (var roleModel in roleModels)
+            {
+                roleIds.Add(roleModel.Id);
+            }
+
             var _menuId = id == null ? 0 : id.Value;
-            var _roleId = 4;
+
             if (id != null)
             {
                 //获取表内表外的操作数据
-                ViewData["ActionList"] = actionRepository.GetActionList(_menuId, _roleId, PositionEnum.FormInside);
-                ViewData["ActionFormRightTop"] = actionRepository.GetActionList(_menuId, _roleId, PositionEnum.FormRightTop);
+                ViewData["ActionList"] = actionRepository.GetActionList(_menuId, roleIds, PositionEnum.FormInside);
+                ViewData["ActionFormRightTop"] = actionRepository.GetActionList(_menuId, roleIds, PositionEnum.FormRightTop);
             }
 
             return View();
@@ -102,7 +113,7 @@ namespace RBACProject.Controllers
 
             roleModel.Status = Convert.ToInt32(Request["Status"]);
 
-            //把修改人，修改时间，ip这些加上
+            
 
             ApiResult<RoleModel> apiResult = new ApiResult<RoleModel>()
             {
@@ -111,7 +122,10 @@ namespace RBACProject.Controllers
 
             };
 
-            roleModel.UpdateBy = "session里面的user";
+            //把修改人，修改时间，ip这些加上
+            var obj = DESEncryptNew.Decrypt(Session["mySession"].ToString());
+            OperatorModel operatorModel = MyJson.ToObject<OperatorModel>(obj);
+            roleModel.UpdateBy = operatorModel.UserName;
             roleModel.UpdateOn = DateTime.Now;
 
 
@@ -140,10 +154,14 @@ namespace RBACProject.Controllers
 
             };
 
+            //把添加人，添加时间加上去
+            var obj = DESEncryptNew.Decrypt(Session["mySession"].ToString());
+            OperatorModel operatorModel = MyJson.ToObject<OperatorModel>(obj);
+
             roleModel.Status = Convert.ToInt32(Request["Status"]);
-            roleModel.CreateBy = "当前操作者，session里面的user";
+            roleModel.CreateBy = operatorModel.UserName;
             roleModel.CreateOn = DateTime.Now;
-            roleModel.UpdateBy = "当前操作者，session里面的user";
+            roleModel.UpdateBy = operatorModel.UserName;
             roleModel.UpdateOn = DateTime.Now;
 
             var insertOk = roleRepository.Insert(roleModel);
@@ -172,11 +190,13 @@ namespace RBACProject.Controllers
             return View();
         }
 
-        public ActionResult RoleMenuActionList()
+        public ActionResult RoleMenuActionList(int roleId)
         {
             //首先是要获取到所有的菜单和操作信息先
 
-            List<MenuModel> list = roleRepository.GetRoleMenuList(4);
+            //20230624
+            //你这里为什么要写个roleId = 4在这里，它要你返回哪些数据的
+            List<MenuModel> list = roleRepository.GetRoleMenuList(roleId);
             var result = new { code = 0, count = list.Count(), data = list };
             return Json(result, JsonRequestBehavior.AllowGet);
 
@@ -204,7 +224,6 @@ namespace RBACProject.Controllers
 
             //删除role-menu-action里面，role = roleId的所有数据，然后再插进去新的数据
             //这里要用到事务
-
 
             ApiResult<RoleMenuActionModel> apiResult = new ApiResult<RoleMenuActionModel>()
             {

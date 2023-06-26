@@ -11,9 +11,12 @@ namespace RBACProject.IRepository
         /// <param name="roleId">角色id</param>
         /// <param name="parentId">父id</param>
         /// <returns></returns>
-        List<MenuTree> GetMenuList(int roleId, int parentId,bool isSelect);
+        List<MenuTree> GetMenuList(List<int> roleIds, int parentId,bool isSelect);
         bool DeleteMenu(int menuId);
         //bool UpdateMenu(MenuModel menuModel);
+
+        //List<MenuModel> GetAllMenuListByRoleId(int roleId);
+        List<MenuModel> GetAllMenuListByRoleId(List<int> roleIds);
 
     }
 }

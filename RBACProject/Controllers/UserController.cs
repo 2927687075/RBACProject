@@ -11,7 +11,6 @@ using Mapster;
 
 namespace RBACProject.Controllers
 {
-    [AllowAnonymous]
     public class UserController : Controller
     {
         ActionRepository actionRepository = new ActionRepository();
@@ -23,13 +22,23 @@ namespace RBACProject.Controllers
         // GET: User
         public ActionResult Index(int? id)
         {
+            //获取mySession里面的登录者的信息
+            //获取当前操作者的角色id
+            var obj = DESEncryptNew.Decrypt(Session["mySession"].ToString());
+            OperatorModel operatorModel = MyJson.ToObject<OperatorModel>(obj);
+            List<RoleModel> roleModels = userRepository.GetUserRoleModels(operatorModel.UserId);
+            List<int> roleIds = new List<int>();
+            foreach (var roleModel in roleModels)
+            {
+                roleIds.Add(roleModel.Id);
+            }
+
             var _menuId = id == null ? 0 : id.Value;
-            var _roleId = 4;
             if (id != null)
             {
                 //获取表内表外的操作数据
-                ViewData["ActionList"] = actionRepository.GetActionList(_menuId, _roleId, PositionEnum.FormInside);
-                ViewData["ActionFormRightTop"] = actionRepository.GetActionList(_menuId, _roleId, PositionEnum.FormRightTop);
+                ViewData["ActionList"] = actionRepository.GetActionList(_menuId, roleIds, PositionEnum.FormInside);
+                ViewData["ActionFormRightTop"] = actionRepository.GetActionList(_menuId, roleIds, PositionEnum.FormRightTop);
             }
 
 
@@ -231,8 +240,7 @@ namespace RBACProject.Controllers
                 }
                 
             }
-           
-            //把修改人，修改时间，ip这些加上
+          
 
             ApiResult<UserModel> apiResult = new ApiResult<UserModel>()
             {
@@ -241,7 +249,10 @@ namespace RBACProject.Controllers
 
             };
 
-            userModel.UpdateBy = userModel.UserName;
+            //把修改人，修改时间，ip这些加上
+            var obj = DESEncryptNew.Decrypt(Session["mySession"].ToString());
+            OperatorModel operatorModel = MyJson.ToObject<OperatorModel>(obj);
+            userModel.UpdateBy = operatorModel.UserName;
             userModel.UpdateOn = DateTime.Now;
 
             if (userRepository.Update(userModel))
@@ -287,16 +298,45 @@ namespace RBACProject.Controllers
             
             };
 
+            var obj = DESEncryptNew.Decrypt(Session["mySession"].ToString());
+            OperatorModel operatorModel = MyJson.ToObject<OperatorModel>(obj);
+
+
             userModel.DeptId = Convert.ToInt32(Request["department"]);
             userModel.Status = Convert.ToInt32(Request["Status"]);
-            userModel.CreateBy = "当前操作者，session里面的user";
+            userModel.CreateBy = operatorModel.UserName;
             userModel.CreateOn = DateTime.Now;
-            userModel.UpdateBy = "当前操作者，session里面的user";
+            userModel.UpdateBy = operatorModel.UserName;
             userModel.UpdateOn = DateTime.Now;
+            userModel.PassWord = Md5.md5("123456",32);
 
             var insertOk = userRepository.Insert(userModel);
             if (insertOk)
             {
+
+                //添加用户的时候把用户角色加入到用户-角色数据库表中
+
+                //怎样把选择的角色信息赋值到roleIds呢，前端是怎么发送请求到后端的
+                //获取用户所拥有的角色Id，从request参数里面获取，name的值不为空则选中
+                List<int> roleIds = new List<int>();
+                List<RoleModel> roleModels = roleRepository.queryAll();
+                foreach (var roleModel in roleModels)
+                {
+                    string roleId = Request[roleModel.RoleName];
+                    if (!string.IsNullOrEmpty(roleId))
+                    {
+                        roleIds.Add(Convert.ToInt32(roleId));
+                    }
+                }
+
+                foreach (var roleId in roleIds)
+                {
+                    UserRoleModel userRoleModel = new UserRoleModel();
+                    userRoleModel.UserId = userModel.Id;
+                    userRoleModel.RoleId = roleId;
+                    userRoleRepository.Insert(userRoleModel);
+                }
+
                 apiResult.state = 200;
                 apiResult.msg = "添加成功";
             }
@@ -340,48 +380,77 @@ namespace RBACProject.Controllers
 
         public ActionResult UpdatePwd()
         {
-            //获取当前session的userId
-            int userId = 10;
+            //获取mySession里面的登录者的信息
+            //获取当前操作者的角色id
+            var obj = DESEncryptNew.Decrypt(Session["mySession"].ToString());
+            OperatorModel operatorModel = MyJson.ToObject<OperatorModel>(obj);
 
-            UserModel userModel = userRepository.QuerySingle(it => it.Id == userId);
+            UserModel userModel = userRepository.QuerySingle(it => it.Id == operatorModel.UserId);
             
 
             return View(userModel);
         }
 
+        //[HttpPost]
+        //public ActionResult UpdatePwd(UserModel userModel)
+        //{
+        //    string oldPwd = Request["OldPassword"];
+        //    string newPassword = Request["Password"];
+        //    string rePassword = Request["Repassword"];
+
+        //    //获取mySession里面的登录者的信息
+        //    var obj = DESEncryptNew.Decrypt(Session["mySession"].ToString());
+        //    OperatorModel operatorModel = MyJson.ToObject<OperatorModel>(obj);
+
+
+        //    UserModel user = userRepository.QuerySingle(it => it.Id == operatorModel.UserId);
+        //    if (user.PassWord==Md5.md5(oldPwd,32))
+        //    {
+        //        user.PassWord = Md5.md5(newPassword, 32);
+        //        user.UpdateBy = operatorModel.UserName;
+        //        user.UpdateOn = DateTime.Now;
+
+        //        var insertOk = userRepository.Update(user);
+        //    }
+
+
+        //    return View(user);
+        //}
+
+
         [HttpPost]
-        public ActionResult UpdatePwd(UserModel userModel)
+        public ActionResult UpdatePwd(string oldPassword,string newPassword)
         {
-            string oldPwd = Request["OldPassword"];
-            string newPassword = Request["Password"];
-            string rePassword = Request["Repassword"];
-
-            if (newPassword != rePassword)
+            ApiResult<UserModel> apiResult = new ApiResult<UserModel>()
             {
-                //两次密码输入不一致
+                state = 400,
+                msg = "修改失败"
 
-                
-            }
+            };
+
+            //获取mySession里面的登录者的信息
+            var obj = DESEncryptNew.Decrypt(Session["mySession"].ToString());
+            OperatorModel operatorModel = MyJson.ToObject<OperatorModel>(obj);
 
 
-            //获取当前session的userId
-            int userId = 10;
-
-            UserModel user = userRepository.QuerySingle(it => it.Id == userId);
-            if (user.PassWord==Md5.md5(oldPwd,32))
+            UserModel user = userRepository.QuerySingle(it => it.Id == operatorModel.UserId);
+            if (user.PassWord == Md5.md5(oldPassword, 32))
             {
                 user.PassWord = Md5.md5(newPassword, 32);
-                user.UpdateBy = "当前操作者，session里面的user";
+                user.UpdateBy = operatorModel.UserName;
                 user.UpdateOn = DateTime.Now;
 
                 var insertOk = userRepository.Update(user);
+
+                if (insertOk)
+                {
+                    apiResult.state = 200;
+                    apiResult.msg = "修改成功";
+                }
             }
 
-            return View(user);
+            return Json(apiResult, JsonRequestBehavior.AllowGet);
         }
 
-
-
-        
     }
 }

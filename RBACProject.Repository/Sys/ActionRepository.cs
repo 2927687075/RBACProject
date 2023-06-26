@@ -15,16 +15,17 @@ namespace RBACProject.Repository
        /// 角色-权限表-角色菜单权限表
        /// </summary>
        /// <param name="roleId"></param>
-       public List<ActionModel> GetActionList(int menuId,int roleId,PositionEnum outOrIn)
+       public List<ActionModel> GetActionList(int menuId,List<int> roleIds,PositionEnum outOrIn)
         {
             //表内的权限，表外的权限
 
             List<ActionModel> actionModels = SqlSugarHelper.db.Queryable<RoleModel>()
          .InnerJoin<RoleMenuActionModel>((r, rma) => r.Id == rma.RoleId)//多个条件用&&
          .InnerJoin<ActionModel>((r, rma, a) => rma.ActionId == a.Id)
-         .Where((r,rma,a) => rma.MenuId == menuId && r.Id == roleId && a.Position == (int)outOrIn)
+         .Where((r,rma,a) => rma.MenuId == menuId && roleIds.Contains(r.Id) && a.Position == (int)outOrIn)
          .OrderBy((r, rma, a) => a.Id)
          .Select((r, rma, a) => a)
+         .Distinct()
          .ToList();
 
             return actionModels;

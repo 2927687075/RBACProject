@@ -8,6 +8,7 @@
     <form class="layui-form" id="form" action="/Action/EditActionSumbit" method="post">
         <input name="Id" value="@Model.Id" type="hidden">
         @Html.HiddenFor(x => x.CreateOn)
+        @Html.HiddenFor(x => x.CreateBy)
         <div class="layui-form-item">
             <label class="layui-form-label">操作名称</label>
             <div class="layui-input-inline">

@@ -105,7 +105,10 @@
                     });
                 } else if (obj.event === 'detail') {
                     common.openTop({
-                        title: '菜单查询', w: '670px', h: '400px', content: '/Permission/MenuQuery?menuId=' + data.Id
+                        detail: true,
+                        title: '菜单查询', w: '670px', h: '400px', content: '/Permission/MenuQuery?menuId=' + data.Id, clickOK: function (index) {
+                            common.close(index);
+                        }
                     });
                 }
                 else if (obj.event === "menu_action") {

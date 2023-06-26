@@ -31,16 +31,32 @@ namespace RBACProject.filter
 
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
-            if (WebHelper.GetSession("mySeesion") != null)
+            //session验证
+            if (WebHelper.GetSession("mySession") != null)
             {
                 // 如果用户已登录，则验证用户是否有相应的授权
                 // 允许访问
+
                 return true;
             }
             else
             {
                 return false;
             }
+
+            //cookie验证
+            //if (!string.IsNullOrEmpty(WebHelper.GetCookie("myCookie")))
+            //{
+            //    // 如果用户已登录，则验证用户是否有相应的授权
+            //    // 允许访问
+            //    return true;
+            //}
+            //else
+            //{
+            //    return false;
+            //}
+
+
         }
 
         protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)

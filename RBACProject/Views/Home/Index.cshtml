@@ -30,8 +30,8 @@
             <ul class="layui-nav admin-header-item">
                 <li class="layui-nav-item">
                     <a href="javascript:;" class="admin-header-user">
-                        <img src="/Content/Upload/img/微信图片_20220729082928.jpg" />
-                        <cite>繁星</cite>
+                        <img src="@ViewBag.ImgUrl" />
+                        <cite>@ViewBag.Username</cite>
                         <span class="layui-nav-more"></span>
                     </a>
                     <dl class="layui-nav-child">
@@ -42,7 +42,7 @@
                             <a href="javascript:;"><i class="iconfont icon-shezhi" aria-hidden="true"></i> 设置</a>
                         </dd>
                         <dd>
-                            <a href="/Admin/Login/OutLogin"><i class="iconfont icon-zhuxiaoguanji red" aria-hidden="true"></i> 注销</a>
+                            <a href="/Login/Logout"><i class="iconfont icon-zhuxiaoguanji red" aria-hidden="true"></i> 注销</a>
                         </dd>
                     </dl>
                 </li>
@@ -104,8 +104,8 @@
     <div class="layui-footer footer footer-demo" id="admin-footer">
         <div class="layui-main">
             <div>
-                @*@Model.CopyRight*@
-                <a href="Model.SiteDomain" target="_blank">@*@Model.SiteDomain*@</a>
+                @ViewBag.CopyRight
+                <!--<a href="Model.SiteDomain" target="_blank">-->@*@Model.SiteDomain*@<!--</a>-->
             </div>
         </div>
     </div>

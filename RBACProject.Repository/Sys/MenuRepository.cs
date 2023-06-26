@@ -16,11 +16,11 @@ namespace RBACProject.Repository
         /// </summary>
         /// <param name="roleId"></param>
         /// <returns></returns>
-        public List<MenuTree> GetMenuList(int roleId, int parentId,bool isSelect)
+        public List<MenuTree> GetMenuList(List<int> roleIds, int parentId,bool isSelect)
         {
 
             List<MenuTree> menuTrees = new List<MenuTree>();
-            List<MenuModel> menuModels = GetChildrenMenuList(roleId, parentId);
+            List<MenuModel> menuModels = GetChildrenMenuList(roleIds, parentId);
 
             foreach (var item in menuModels)
             {
@@ -30,7 +30,7 @@ namespace RBACProject.Repository
                 menuTree.name = item.MenuName;
                 menuTree.title = item.MenuName;
                 menuTree.icon = item.MenuIcon;
-                menuTree.children = GetMenuList(roleId, item.Id, isSelect);
+                menuTree.children = GetMenuList(roleIds, item.Id, isSelect);
                 menuTree.alias = null;
                 menuTree.href = isSelect == false ? item.MenuUrl : null;
                 menuTree.spread = false;
@@ -43,26 +43,49 @@ namespace RBACProject.Repository
 
         }
 
-        /// <summary>
-        /// 获取所有的菜单信息(根据角色Id)
-        /// </summary>
-        /// <param name="roleId"></param>
-        /// <returns></returns>
-        public List<MenuModel> GetAllMenuListByRoleId(int roleId)
+        ///// <summary>
+        ///// 获取所有的菜单信息(根据角色Id)
+        ///// </summary>
+        ///// <param name="roleId"></param>
+        ///// <returns></returns>
+        //public List<MenuModel> GetAllMenuListByRoleId(int roleId)
+        //{
+        //    List<MenuModel> menuModels = SqlSugarHelper.db.Queryable<RoleModel>()
+        // .InnerJoin<RoleMenuActionModel>((r, rma) => r.Id == rma.RoleId)
+        // .InnerJoin<MenuModel>((r, rma, m) => rma.MenuId == m.Id)
+        // .Where((r, rma, m) => r.Id == roleId)
+        // .Select((r, rma, m) => m)
+        // .Distinct()
+        // .ToList();
+        //    return menuModels;
+        //}
+
+        public List<MenuModel> GetAllMenuListByRoleId(List<int> roleIds)
         {
             List<MenuModel> menuModels = SqlSugarHelper.db.Queryable<RoleModel>()
          .InnerJoin<RoleMenuActionModel>((r, rma) => r.Id == rma.RoleId)
          .InnerJoin<MenuModel>((r, rma, m) => rma.MenuId == m.Id)
-         .Where((r, rma, m) => r.Id == roleId)
+         .Where((r, rma, m) => roleIds.Contains(r.Id))
          .Select((r, rma, m) => m)
          .Distinct()
          .ToList();
             return menuModels;
         }
 
-        public List<MenuModel> GetChildrenMenuList(int roleId, int parentId)
+
+
+        //public List<MenuModel> GetChildrenMenuList(int roleId, int parentId)
+        //{
+        //    List<MenuModel> menuModels = GetAllMenuListByRoleId(roleId);
+        //    List<MenuModel> childrenMenus = menuModels.Where(it => it.ParentId == parentId).ToList();
+
+
+        //    return childrenMenus;
+        //}
+
+        public List<MenuModel> GetChildrenMenuList(List<int> roleIds, int parentId)
         {
-            List<MenuModel> menuModels = GetAllMenuListByRoleId(roleId);
+            List<MenuModel> menuModels = GetAllMenuListByRoleId(roleIds);
             List<MenuModel> childrenMenus = menuModels.Where(it => it.ParentId == parentId).ToList();
 
 

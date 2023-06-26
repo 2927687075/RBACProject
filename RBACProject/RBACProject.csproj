@@ -343,6 +343,8 @@
     <Content Include="Views\User\GetUserInfo.cshtml" />
     <Content Include="Views\Shared\_LayoutSinglePage.cshtml" />
     <Content Include="Views\User\UpdatePwd.cshtml" />
+    <Content Include="Views\Permission\MenuQuery - 复制.cshtml" />
+    <Content Include="Views\User\UpdatePwd - 复制.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

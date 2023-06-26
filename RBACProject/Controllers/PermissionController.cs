@@ -8,10 +8,9 @@ using System;
 
 namespace RBACProject.Controllers
 {
-    [AllowAnonymous]
     public class PermissionController : Controller
     {
-
+        UserRepository userRepository = new UserRepository();
         MenuRepository menuRepository =  new MenuRepository();
         ActionRepository actionRepository =  new ActionRepository();
 
@@ -23,21 +22,43 @@ namespace RBACProject.Controllers
 
         public JsonResult GetMenuList(bool isIndex = false,bool isSelect = false)
         {
-            //返回菜单json数据
+            //获取mySession里面的登录者的信息
+            //获取当前操作者的角色id
+            var obj = DESEncryptNew.Decrypt(Session["mySession"].ToString());
+            OperatorModel operatorModel = MyJson.ToObject<OperatorModel>(obj);
+            List<RoleModel> roleModels = userRepository.GetUserRoleModels(operatorModel.UserId);
+            List<int> roleIds = new List<int>();
+            foreach (var roleModel in roleModels)
+            {
+                roleIds.Add(roleModel.Id);
+            }
 
-            List<MenuTree> menuTrees = menuRepository.GetMenuList(4,0,isSelect);
+            List<MenuTree> menuTrees = menuRepository.GetMenuList(roleIds,0,isSelect);
+
+            //返回菜单json数据
             return Json(menuTrees, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Menu(int? id)
         {
+            //获取mySession里面的登录者的信息
+            //获取当前操作者的角色id
+            var obj = DESEncryptNew.Decrypt(Session["mySession"].ToString());
+            OperatorModel operatorModel = MyJson.ToObject<OperatorModel>(obj);
+            List<RoleModel> roleModels = userRepository.GetUserRoleModels(operatorModel.UserId);
+            List<int> roleIds = new List<int>();
+            foreach (var roleModel in roleModels)
+            {
+                roleIds.Add(roleModel.Id);
+            }
+
             var _menuId = id == null ? 0 : id.Value;
-            var _roleId = 4;
+
             if (id != null)
             {
                 //获取表内表外的操作数据
-                ViewData["ActionList"] = actionRepository.GetActionList(_menuId, _roleId, PositionEnum.FormInside);
-                ViewData["ActionFormRightTop"] = actionRepository.GetActionList(_menuId, _roleId, PositionEnum.FormRightTop);
+                ViewData["ActionList"] = actionRepository.GetActionList(_menuId, roleIds, PositionEnum.FormInside);
+                ViewData["ActionFormRightTop"] = actionRepository.GetActionList(_menuId, roleIds, PositionEnum.FormRightTop);
             }
             return View();
         }
@@ -65,13 +86,19 @@ namespace RBACProject.Controllers
         }
         public ActionResult MenuAddSubmit(MenuModel model)
         {
+
             ApiResult<MenuModel> apiResult =  new ApiResult<MenuModel>();
+
+            //获取mySession里面的登录者的信息
+            //获取当前操作者的userId
+            var obj = DESEncryptNew.Decrypt(Session["mySession"].ToString());
+            OperatorModel operatorModel = MyJson.ToObject<OperatorModel>(obj);
 
             //把菜单信息添加到数据库里面去
             model.CreateOn = DateTime.Now;
-            model.CreateBy = "超级管理员";
+            model.CreateBy = operatorModel.UserName;
             model.UpdateOn = DateTime.Now; 
-            model.UpdateBy = "超级管理员";
+            model.UpdateBy = operatorModel.UserName;
             bool insertOk =  menuRepository.Insert(model);
             
             if (insertOk)
@@ -124,13 +151,23 @@ namespace RBACProject.Controllers
                 state = 400,
                 msg = "修改失败"
 
-        };
+            };
+
+            //获取mySession里面的登录者的信息
+            //获取当前操作者的userId
+            var obj = DESEncryptNew.Decrypt(Session["mySession"].ToString());
+            OperatorModel operatorModel = MyJson.ToObject<OperatorModel>(obj);
+
+            //修改的时间、修改人
+            menuModel.UpdateOn = DateTime.Now;
+            menuModel.UpdateBy = operatorModel.UserName;
 
             var reault = menuRepository.Update(menuModel);
             if (reault)
             {
                 apiResult.state = 200;
                 apiResult.msg = "修改成功";
+
             }
 
             return Json(apiResult, JsonRequestBehavior.AllowGet);

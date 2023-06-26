@@ -12,11 +12,10 @@ using RBACProject.Common;
 
 namespace RBACProject.Controllers
 {
-    [AllowAnonymous]
     public class ActionController : Controller
     {
         ActionRepository actionRepository = new ActionRepository();
-
+        UserRepository userRepository = new UserRepository();
 
         /// <summary>
         /// id 是菜单id，根据菜单Id获取它的所有action的信息
@@ -26,13 +25,24 @@ namespace RBACProject.Controllers
         /// <returns></returns>
         public ActionResult Index(int? id)
         {
+            //获取mySession里面的登录者的信息
+            //获取当前操作者的角色id
+            var obj = DESEncryptNew.Decrypt(Session["mySession"].ToString());
+            OperatorModel operatorModel = MyJson.ToObject<OperatorModel>(obj);
+            List<RoleModel> roleModels = userRepository.GetUserRoleModels(operatorModel.UserId);
+            List<int> roleIds = new List<int>();
+            foreach (var roleModel in roleModels)
+            {
+                roleIds.Add(roleModel.Id);
+            }
+
             var _menuId = id == null ? 0 : id.Value;
-            var _roleId = 4;//当前操作人员的id，后期换成session里面user的角色Id
+
             if (id != null)
             {
                 //获取表内表外的操作数据
-                ViewData["ActionList"] = actionRepository.GetActionList(_menuId, _roleId, PositionEnum.FormInside);
-                ViewData["ActionFormRightTop"] = actionRepository.GetActionList(_menuId, _roleId, PositionEnum.FormRightTop);
+                ViewData["ActionList"] = actionRepository.GetActionList(_menuId, roleIds, PositionEnum.FormInside);
+                ViewData["ActionFormRightTop"] = actionRepository.GetActionList(_menuId, roleIds, PositionEnum.FormRightTop);
             }
 
             return View();
@@ -99,7 +109,10 @@ namespace RBACProject.Controllers
 
             };
 
-            actionModel.UpdateBy = "session里面的user";
+            //把修改人，修改时间，ip这些加上
+            var obj = DESEncryptNew.Decrypt(Session["mySession"].ToString());
+            OperatorModel operatorModel = MyJson.ToObject<OperatorModel>(obj);
+            actionModel.UpdateBy = operatorModel.UserName;
             actionModel.UpdateOn = DateTime.Now;
 
             if (actionRepository.Update(actionModel))
@@ -127,9 +140,12 @@ namespace RBACProject.Controllers
 
             };
 
-            actionModel.CreateBy = "当前操作者，session里面的user";
+            //把修改人，修改时间，ip这些加上
+            var obj = DESEncryptNew.Decrypt(Session["mySession"].ToString());
+            OperatorModel operatorModel = MyJson.ToObject<OperatorModel>(obj);
+            actionModel.CreateBy = operatorModel.UserName;
             actionModel.CreateOn = DateTime.Now;
-            actionModel.UpdateBy = "当前操作者，session里面的user";
+            actionModel.UpdateBy = operatorModel.UserName;
             actionModel.UpdateOn = DateTime.Now;
 
             var insertOk = actionRepository.Insert(actionModel);

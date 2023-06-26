@@ -8,6 +8,7 @@
     <form class="layui-form" id="form" action="/User/EditUserSumbit" method="post">
         <input name="Id" value="@Model.Id" type="hidden">
         @Html.HiddenFor(x => x.CreateOn)   @*//隐藏input，用于把数据提供到后台*@
+        @Html.HiddenFor(x => x.CreateBy)
         @Html.HiddenFor(x => x.PassWord)
         @Html.HiddenFor(x => x.LoginIP)
         @Html.HiddenFor(x => x.LoginDate)

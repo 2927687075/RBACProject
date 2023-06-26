@@ -27,6 +27,7 @@ namespace RBACProject.Common
             if (key.IsEmpty())
                 return;
             HttpContext.Current.Session[key] = value;
+            var t = HttpContext.Current.Session[key];
         }
 
         /// <summary>

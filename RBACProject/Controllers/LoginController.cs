@@ -8,6 +8,7 @@ using RBACProject.Model;
 using RBACProject.IRepository;
 using RBACProject.Repository;
 using System.Net;
+using System.Configuration;
 
 namespace RBACProject.Controllers
 {
@@ -20,19 +21,23 @@ namespace RBACProject.Controllers
         // GET: Login
         public ActionResult Index()
         {
+            ViewBag.Title = ConfigurationManager.AppSettings["SiteName"];
             return View();
         }
 
         public ActionResult GetAuthCode()
         {
+            //VerifyCode 生成验证码的类
+            //File(文件内容byte类型，文件类型string)
 
             return File(new VerifyCode().GetVerifyCode(), @"image/Gif");
 
         }
 
-        public string CheckLogin(string username,string password)
+        public string CheckLogin(string username,string password,string code)
         {
-            ApiResult<UserModel> apiResult =  new ApiResult<UserModel>() { 
+            ApiResult<UserModel> apiResult = new ApiResult<UserModel>()
+            {
                 state = 404,
                 msg = "登录失败",
             };
@@ -41,7 +46,6 @@ namespace RBACProject.Controllers
 
             //记录登录信息
             loginInfo.UserName = username;
-
 
             loginInfo.IpAddress = Utils.GetIp();
             loginInfo.LoginLocation = "";
@@ -83,6 +87,17 @@ namespace RBACProject.Controllers
             #endregion
             loginInfo.LoginTime = DateTime.Now;
 
+            if (Session["code"].IsEmpty() || Md5.md5(code.ToLower(), 32) != Session["code"].ToString())
+            {
+                apiResult.msg = "验证码有误，请重新输入";
+                loginInfo.Message = "验证码有误";
+
+                loginInfoRepository.Insert(loginInfo);
+                return MyJson.ToJson(apiResult);
+            }
+
+            
+
             //验证用户名和密码是否正确
             UserModel userModel = userRepository.QuerySingle(it => it.UserName == username && it.PassWord == password);
 
@@ -102,17 +117,17 @@ namespace RBACProject.Controllers
                 operatorModel.LoginIPAddress = loginInfo.IpAddress;
                 operatorModel.LoginIPAddressName = Net.GetLocation(operatorModel.LoginIPAddress);
                 operatorModel.LoginTime = DateTime.Now;
-                operatorModel.LoginToken = Guid.NewGuid().ToString();
-
+                operatorModel.LoginToken = Guid.NewGuid().ToString(); //这里可否使用jwt的token
 
                 //把用户信息写到session里面或者cookie里面
-                WebHelper.WriteCookie("myCookie", operatorModel.ToJson());
-                WebHelper.WriteSession("mySession", operatorModel.ToJson());
+                WebHelper.WriteCookie("myCookie", DESEncryptNew.Encrypt(operatorModel.ToJson()));
+                WebHelper.WriteSession("mySession", DESEncryptNew.Encrypt(operatorModel.ToJson()));
 
             }
             else
             {
-                loginInfo.Message = "登录失败";
+                loginInfo.Message = "用户名或密码不正确";
+                apiResult.msg = "用户名或密码不正确";
 
             }
 
@@ -123,7 +138,12 @@ namespace RBACProject.Controllers
 
         }
 
-
+        public ActionResult Logout()
+        {
+            Session.Abandon();  //把当前Session对象删除了
+            //OperatorProvider.Provider.RemoveCurrent();  //清空cookie信息或者session信息
+            return RedirectToAction("Index", "Login");  //重定向回登录页面
+        }
 
     }
 }
