@@ -62,6 +62,7 @@
     <Compile Include="sys\RoleModel.cs" />
     <Compile Include="sys\UserModel.cs" />
     <Compile Include="sys\UserRoleModel.cs" />
+    <Compile Include="sys\InventoryModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

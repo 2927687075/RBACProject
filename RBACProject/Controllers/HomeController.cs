@@ -8,7 +8,6 @@ using RBACProject.IRepository;
 using RBACProject.Repository;
 using RBACProject.Model;
 using System.Configuration;
-using RBACProject.Common;
 
 namespace RBACProject.Controllers
 {

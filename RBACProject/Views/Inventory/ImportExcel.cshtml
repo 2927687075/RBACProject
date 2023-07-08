@@ -1,0 +1,110 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ImportExcel</title>
+
+    <link href="~/Content/plugins/layui/css/layui.css" rel="stylesheet" />
+    <link href="~/Content/fonts/iconfont.css" rel="stylesheet" />
+    <link href="~/Content/css/admin.css" rel="stylesheet" />
+    <script src="~/Content/plugins/layui/layui.js"></script>
+    <script src="~/Content/js/global.js"></script>
+    <script src="~/Content/js/jquery-1.10.2.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 10px;
+        }
+    </style>
+
+
+
+</head>
+<body>
+
+    <form action="" method="post" enctype="multipart/form-data">
+        <div style="margin-top:30px;margin-left:30px">
+            <span>文件上传：</span>
+            <input type="button" class="layui-btn" id="importBtn" value="点击选择excel文件，批量导入数据" />
+            <input type="file" name="uploadFile" id="uploadFile" style="display:none" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+        </div>
+        <div style="margin-top:50px;margin-left:30px">
+            说明：	新用户请下载 <a href="/Inventory/DownloadExcelTemplate" style="color:blue">材料库存记录列表.xlsx 模版文件</a>，模版文件更新于 2022-02-24
+        </div>
+    </form>
+
+    <script>
+
+        layui.use('layer', function () {
+            var layer = layui.layer,
+                $ = layui.$;
+
+
+            $("#importBtn").click(function () {
+                $("#uploadFile").click();
+
+            });
+
+            $("#uploadFile").on("change", function () {
+                var formData = new FormData();
+                var fileInput = document.getElementById('uploadFile').files[0];
+                formData.append('file', fileInput);
+                $.ajax({
+                    url: '/Inventory/ImportExcelInventory',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: formData,                  //用于传递文件数据的FormData对象
+                    contentType: false,             //是否设置上传文件的Content-Type属性
+                    processData: false,             //是否对上传文件的值进行解析和处理
+                    success: function (data) {
+                        if (data.code == 200) {
+                            //已经上传成功，数据已经导入到数据库里面，
+                            //接下来是关闭该页面，然后刷新当前页面，或者重新加载表格数据
+                            
+
+
+                            layer.msg(data.msg, {
+                                icon: 1
+                            });
+                            setTimeout(function () {
+                                var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                                parent.layer.close(index);
+                                parent.layui.table.reload('defaultReload', { page: { curr: 1 } });
+                            }, 2000);
+
+
+
+                        } else {
+                            layer.msg("上传失败：" + data.message);
+                        }
+                    }
+                });
+
+
+
+
+
+            });
+
+            // 关闭弹框
+            function closeDialog() {
+                layer.close(index);
+            }
+       
+
+
+
+        });
+        
+
+
+    </script>
+
+
+</body>
+</html>

@@ -1,0 +1,198 @@
+﻿
+@{ ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutList.cshtml"; }
+
+<div class="admin-main">
+    <blockquote class="layui-elem-quote p10">
+        <form id="formSearch" class="layui-form" action="">
+            <div class="layui-form-item" style="margin-bottom:0px;">
+                <div style="float:right;">
+                    <label class="layui-form-label">操作名称：</label>
+                    <div class="layui-input-inline">
+                        <input name="ActionName" id="ActionName" lay-verify="" autocomplete="off" class="layui-input">
+                    </div>
+                    <label class="layui-form-label">状态：</label>
+                    <div class="layui-input-inline">
+                        <input name="ActionName" id="ActionName" lay-verify="" autocomplete="off" class="layui-input">
+                    </div>
+                    <button type="button" style="margin-left:50px" class="layui-btn">查询</button>
+                </div>
+                <div style="float:left;">
+                    <button type="button" id="importExcel" class="layui-btn">导入</button>
+                    <button type="button" id="exportExcel" class="layui-btn">导出</button>
+                    <button type="button" id="editExcel" class="layui-btn">编辑</button>
+                </div>
+            </div>
+        </form>
+    </blockquote>
+    <div class="layui-field-box">
+        <table id="defaultTable" lay-filter="defaultruv"></table>
+        @*<script type="text/html" id="bar">
+                @Html.ToolBarHtml(ViewData["ActionList"])
+            </script>*@
+    </div>
+</div>
+<script>
+	layui.use(['table', 'common', 'form'], function () {
+		var table = layui.table,
+            form = layui.form,
+            common = layui.common;
+		//表格
+		table.render({
+            id: 'defaultReload'
+            , elem: '#defaultTable'
+            , height: 'full-112' //高度最大化减去差值
+            , url: '/Inventory/GetInventoryList' //数据接口
+            , page: true //开启分页
+            , cols: [[ //表头
+                { checkbox: true, fixed: true }
+                , { type: 'numbers', title: '序号', width: 80, fixed: 'left' }
+                , { field: 'MeterailCode', title: '材料编码' }
+                , { field: 'MeterailName', title: '材料名称' }
+                , { field: 'MeterailLotNo', title: '材料批次' }
+                , { field: 'MeterailSupplier', title: '供应商' }
+                , { field: 'MeterailQty', title: '库存数量' }
+                , { field: 'MeterailUpdateDate', title: '库存更新时间', templet: '<div>{{showDate(d.MeterailUpdateDate)}}</div>' }  //应该就是返回的data对象吧
+                , { field: 'Remark', title: '备注' }
+                , { field: 'Status', title: '状态' }
+                , { field: 'ImportBy', title: '导入人' }
+                , { field: 'ImportTime', title: '导入时间', templet: '<div>{{showDate(d.ImportTime)}}</div>' }
+
+            ]]
+		});
+		var $ = layui.$, active = {
+			reload: function () {
+			    //执行重载
+			    table.reload('defaultReload', {
+			        page: {
+			            curr: 1 //重新从第 1 页开始
+			        }
+                    , where: urlToJson($("#formSearch").serialize())
+			    });
+			}
+		};
+		//服务器排序
+		table.on('sort(defaultruv)', function (obj) {
+			//尽管我们的 table 自带排序功能，但并没有请求服务端。
+			//有些时候，你可能需要根据当前排序的字段，重新向服务端发送请求，如：
+			table.reload('defaultReload', {
+			    initSort: obj //记录初始排序，如果不设的话，将无法标记表头的排序状态。 layui 2.1.1 新增参数
+                , where: { //请求参数
+                    field: obj.field //排序字段
+                , order: obj.type //排序方式
+                }
+			});
+		});
+		$('#btnSearch').on('click', function () {
+			var type = $(this).data('type');
+			active[type] ? active[type].call(this) : '';
+		});
+		//add
+		$('#btnAdd').on('click', function () {
+			common.openTop({
+			    title: '操作添加', w: '670px', h: '500px', content: '/Action/AddAction/'
+			});
+		});
+		//监听工具条
+		table.on('tool(defaultruv)', function (obj) {
+			var data = obj.data;
+   //         if (obj.event === 'importExcel') {
+   //             alert(1);
+   //         } else if (obj.event === 'exportExcel') {
+   //             alert(2);
+   //         } else if (obj.event === 'editExcel') {
+   //             alert(3);
+			//}
+		});
+
+        //query
+        $('#btnSearch').on('click', function () {
+
+            var ActionName = $('#ActionName').val();
+            var status = $('#Status').val();
+
+            //表格
+            table.render({
+                id: 'defaultReload'
+                , elem: '#defaultTable'
+                , height: 'full-112' //高度最大化减去差值
+                , url: '/Action/GetActionList?ActionName=' + ActionName + "&status=" + status //数据接口
+                , page: true //开启分页
+                , cols: [[ //表头
+                    { checkbox: true, fixed: true }
+                    , { field: 'Id', title: 'Id', width: 80, fixed: 'left' }
+                    , { field: 'ActionCode', title: '操作编码', sort: true }
+                    , { field: 'ActionName', title: '操作名称' }
+                    , { field: 'MenuIcon', title: '操作图标', templet: '<div><i class="iconfont {{d.Icon}}"></i></div>' }
+                    , { field: 'Status', title: '状态', templet: '<div>{{showStatus(d.Status)}}</div>', unresize: true, width: 100, align: 'center' }
+                    , { field: '', title: '操作', toolbar: "#bar" }
+                ]]
+            });
+        });
+
+        var winheight = $(window).height();
+        var hegiht = winheight * 0.6;
+        //import
+        $('#importExcel').on('click', function () {
+            var url = "/Inventory/ImportExcel";
+            layer.open({
+                type: 2,
+                skin: 'layui-layer-demo',
+                title: '导入',
+                closeBtn: 1,
+                anim: 2,
+                area: ['600px', hegiht + 'px'],
+                shadeClose: false,
+                content: url
+            });
+
+        });
+        //export
+        $('#exportExcel').on('click', function () {
+
+            //获取选中的layui table的id，传到后台去
+            var checkDatas = table.checkStatus('defaultReload').data; // 获取选中的数据
+            console.log(checkDatas); // 输出选中的数据
+
+            var strId = ""
+            for (var i = 0; i < checkDatas.length; i++) {
+                if (i == 0) {
+                    strId =  checkDatas[i].Id;
+                } else {
+                    strId = strId + "," + checkDatas[i].Id;
+                }
+            }
+            console.log(strId);
+
+            window.location.href = "/Inventory/ExportToExcel?strId=" + strId;
+
+
+            //// 使用AJAX将选中的数据传输到后台
+            //$.ajax({
+            //    url: '/Inventory/ExportToExcel',
+            //    type: 'POST',
+            //    dataType: "json",
+            //    data: JSON.stringify(inventoryModels),
+            //    contentType: 'application/json; charset=utf-8',
+            //    success: function (response) {
+            //        alert(1)
+                    
+                    
+            //    },
+            //    error: function (response) {
+            //        alert(2)
+            //        console.log('导出Excel文件失败');
+            //    }
+            //});
+
+        });
+        //edit
+        $('#editExcel').on('click', function () {
+            
+        });
+
+	});
+</script>
+
+
+

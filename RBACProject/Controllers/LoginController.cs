@@ -143,6 +143,7 @@ namespace RBACProject.Controllers
             Session.Abandon();  //把当前Session对象删除了
             //OperatorProvider.Provider.RemoveCurrent();  //清空cookie信息或者session信息
             return RedirectToAction("Index", "Login");  //重定向回登录页面
+
         }
 
     }
