@@ -98,7 +98,7 @@ namespace RBACProject.Repository
 
         public DataTable GetTableData(List<InventoryModel> inventoryModels) {
 
-            // 示例：从数据库获取数据
+            // 从数据库获取数据
             DataTable table = new DataTable();
 
             table.Columns.Add("Id", typeof(string));
