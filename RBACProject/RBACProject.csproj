@@ -513,6 +513,10 @@
       <Project>{f7c85d11-3fa4-479a-8c01-12badec783a6}</Project>
       <Name>RBACProject.IRepository</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RBACProject.IService\RBACProject.IService.csproj">
+      <Project>{f9159952-2ef0-4c82-8aa1-b6d4d0b8f334}</Project>
+      <Name>RBACProject.IService</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RBACProject.Model\RBACProject.Model.csproj">
       <Project>{2216206a-dc6b-4501-933c-7c67f4d67013}</Project>
       <Name>RBACProject.Model</Name>
@@ -520,6 +524,10 @@
     <ProjectReference Include="..\RBACProject.Repository\RBACProject.Repository.csproj">
       <Project>{1bb977f2-a354-4d4b-a57e-8584a9565d00}</Project>
       <Name>RBACProject.Repository</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RBACProject.Service\RBACProject.Service.csproj">
+      <Project>{32d72164-ab87-4c40-a0b0-3c42e94b4f83}</Project>
+      <Name>RBACProject.Service</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

@@ -16,6 +16,9 @@ namespace RBACProject.Service
 
         public List<ActionModel> GetActionList(int menuId, List<int> roleIds, PositionEnum outOrIn)
         {
+
+
+
             return actionRepository.GetActionList(menuId,roleIds,outOrIn);
         }
 

@@ -7,6 +7,8 @@ using RBACProject.Model;
 using RBACProject.IRepository;
 using RBACProject.Repository;
 using RBACProject.Common;
+using RBACProject.IService;
+using RBACProject.Service;
 
 
 
@@ -16,6 +18,16 @@ namespace RBACProject.Controllers
     {
         ActionRepository actionRepository = new ActionRepository();
         UserRepository userRepository = new UserRepository();
+
+        public IActionService actionService;
+        public IUserService userService;
+
+        public ActionController(IActionService _actionService,IUserService _userService)
+        {
+            actionService = _actionService;
+            userService = _userService;
+        }
+
 
         /// <summary>
         /// id 是菜单id，根据菜单Id获取它的所有action的信息
@@ -29,7 +41,8 @@ namespace RBACProject.Controllers
             //获取当前操作者的角色id
             var obj = DESEncryptNew.Decrypt(Session["mySession"].ToString());
             OperatorModel operatorModel = MyJson.ToObject<OperatorModel>(obj);
-            List<RoleModel> roleModels = userRepository.GetUserRoleModels(operatorModel.UserId);
+            //List<RoleModel> roleModels = userRepository.GetUserRoleModels(operatorModel.UserId);
+            List<RoleModel> roleModels = userService.GetUserRoleModels(operatorModel.UserId);
             List<int> roleIds = new List<int>();
             foreach (var roleModel in roleModels)
             {
@@ -89,10 +102,6 @@ namespace RBACProject.Controllers
         {
 
             ActionModel actionModel = actionRepository.QuerySingle(it => it.Id == id);
-
-            
-
-
 
             return View(actionModel);
         }
